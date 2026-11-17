@@ -1,0 +1,20 @@
+[
+  {
+    "file": "01-consent.jpg",
+    "pack": "consent",
+    "step": 6,
+    "caption": "Waiting after completing the navigation and reload tasks"
+  },
+  {
+    "file": "02-consent.jpg",
+    "pack": "consent",
+    "step": 3,
+    "caption": "Clicking Decline on the cookie consent banner"
+  },
+  {
+    "file": "03-consent-accept.jpg",
+    "pack": "consent-accept",
+    "step": 2,
+    "caption": "Accepting cookie consent in the banner"
+  }
+]
