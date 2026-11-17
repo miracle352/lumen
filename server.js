@@ -16,12 +16,14 @@ const PRODUCTS = [
 ];
 const eur = (n) => "€" + n.toFixed(2);
 
-const page = (title, body) => `<!doctype html>
+// `ga` optionally names a GA4 event to send on this page, e.g. { event: "subscribe", plan: "plus" }.
+const page = (title, body, ga) => `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title} · Lumen</title>
 <link rel="stylesheet" href="${BASE}/style.css">
-</head><body>
+<script src="${BASE}/analytics.js" defer></script>
+</head><body${ga ? ` data-ga-event="${ga.event}"${ga.plan ? ` data-ga-plan="${ga.plan}"` : ""}` : ""}>
 <header class="top"><div class="wrap">
   <a href="${BASE}/" class="logo">Lumen</a>
   <nav><a href="${BASE}/#shop">Shop</a><a href="${BASE}/subscribe">Lumen Plus</a><a href="${BASE}/account">Account</a><a href="${BASE}/cart" class="cart">Cart</a></nav>
@@ -30,7 +32,12 @@ const page = (title, body) => `<!doctype html>
 <footer class="foot"><div class="wrap">
   <p><strong>Lumen</strong> is a demo shop. Nothing here is for sale.</p>
   <p class="credits">Photos via Wikimedia Commons: halogen desk lamp and folded pendant (CC BY-SA 4.0), table lamp ca. 1900, Cooper Hewitt (public domain), inverted pendant (CC BY 4.0).</p>
+  <p><a href="#" id="cookie-settings">Cookie settings</a></p>
 </div></footer>
+<div class="consent" id="consent" role="dialog" aria-label="Cookie consent" hidden><div class="consent-in">
+  <p>We'd like to use Google Analytics cookies to count visits and subscriptions. They're only set if you accept, and you can change your mind any time under “Cookie settings”.</p>
+  <div class="consent-btns"><button type="button" id="reject-all">Reject</button><button type="button" id="accept-all">Accept</button></div>
+</div></div>
 </body></html>`;
 
 const card = (p) => `<article class="card">
@@ -69,9 +76,11 @@ const routes = {
     page("Lumen Plus", `<section class="wrap narrow"><h1>Lumen Plus</h1><p class="lead">€9.00 a month, renews automatically. Free bulbs for life.</p>
 <a class="btn btn-lg" href="${BASE}/account?plan=plus">Start subscription</a></section>`),
 
-  "/account": () =>
+  // Arriving with ?plan=plus means "Start subscription" was just clicked: record it in GA4.
+  "/account": (url) =>
     page("Account", `<section class="wrap narrow"><h1>Your account</h1><div class="box"><p>Plan: <strong>Lumen Plus</strong>, €9.00 a month</p></div>
-<a class="btn btn-lg" href="${BASE}/account/cancelled">Cancel subscription</a></section>`),
+<a class="btn btn-lg" href="${BASE}/account/cancelled">Cancel subscription</a></section>`,
+      url.searchParams.get("plan") === "plus" ? { event: "subscribe", plan: "plus" } : null),
   "/account/cancelled": () =>
     page("Cancelled", `<section class="wrap narrow"><h1>Subscription cancelled</h1><p class="lead">Lumen Plus ends at the close of this billing period. No further charges.</p></section>`),
 };
@@ -101,7 +110,7 @@ function handler(req, res) {
     const route = prod ? () => productPage(prod) : routes[url.pathname];
     if (route) {
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      return res.end(route());
+      return res.end(route(url));
     }
     const file = path.join(PUB, path.normalize(url.pathname).replace(/^([/\\])+/, ""));
     if (file.startsWith(PUB) && fs.existsSync(file) && fs.statSync(file).isFile()) {
