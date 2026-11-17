@@ -1,0 +1,20 @@
+[
+  {
+    "file": "01-consent.jpg",
+    "pack": "consent",
+    "step": 3,
+    "caption": "Clicking Reject on the cookie consent dialog"
+  },
+  {
+    "file": "02-consent-accept.jpg",
+    "pack": "consent-accept",
+    "step": 2,
+    "caption": "Accepting cookies in the consent banner"
+  },
+  {
+    "file": "03-cancel.jpg",
+    "pack": "cancel",
+    "step": 8,
+    "caption": "the page confirms the subscription is cancelled"
+  }
+]
