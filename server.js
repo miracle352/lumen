@@ -21,6 +21,15 @@ const page = (title, body) => `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title} · Lumen</title>
 <link rel="stylesheet" href="${BASE}/style.css">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LUMEN0001"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LUMEN0001');
+</script>
 </head><body>
 <header class="top"><div class="wrap">
   <a href="${BASE}/" class="logo">Lumen</a>
