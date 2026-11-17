@@ -21,14 +21,30 @@ const page = (title, body) => `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title} · Lumen</title>
 <link rel="stylesheet" href="${BASE}/style.css">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-LUMEN0001"></script>
 <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-LUMEN0001');
+  // Google tag (gtag.js) loads only after the visitor accepts cookies.
+  function loadTag(){
+    if (window.__tagLoaded) return; window.__tagLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){dataLayer.push(arguments);};
+    gtag('js', new Date());
+    gtag('config', 'G-LUMEN0001');
+    var s = document.createElement('script'); s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-LUMEN0001';
+    document.head.appendChild(s);
+  }
+  var choice = null;
+  try { choice = localStorage.getItem('cookie-consent'); } catch (e) {}
+  if (choice === 'accepted') loadTag();
+  document.addEventListener('DOMContentLoaded', function(){
+    if (choice === 'accepted' || choice === 'declined') return;
+    var b = document.createElement('div'); b.className = 'consent';
+    b.innerHTML = '<div class="consent-in"><p>We use cookies for analytics. Accept or decline?</p><div class="consent-btns"><button id="decline-all">Decline</button><button id="accept-all">Accept</button></div></div>';
+    document.body.appendChild(b);
+    function pick(v){ try { localStorage.setItem('cookie-consent', v); } catch (e) {} b.remove(); if (v === 'accepted') loadTag(); }
+    document.getElementById('accept-all').onclick = function(){ pick('accepted'); };
+    document.getElementById('decline-all').onclick = function(){ pick('declined'); };
+  });
 </script>
 </head><body>
 <header class="top"><div class="wrap">
