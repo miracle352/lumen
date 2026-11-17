@@ -1,0 +1,26 @@
+# Statute: Kane CLI checks each pull request against consumer law in a real browser.
+# It reads the diff first and only runs the checks the change could affect.
+name: Statute
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  statute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+      - uses: miracle352/statute@main
+        with:
+          check: auto
+          url: "http://localhost:3000"
+          start: "npm start"
+          lt-username: ${{ secrets.LT_USERNAME }}
+          lt-access-key: ${{ secrets.LT_ACCESS_KEY }}
+          fix: "true"
+          claude-token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

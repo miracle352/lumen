@@ -1,0 +1,8 @@
+{
+  "check": [
+    "consent"
+  ],
+  "url": "http://localhost:3000",
+  "start": "npm start",
+  "rounds": 3
+}
